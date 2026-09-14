@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#c4172f">
+<title>Merkal Supermercado — compras online</title>
+<link rel="icon" href="logo.png">
+<meta property="og:title" content="Merkal Supermercado — compras online">
+<meta property="og:description" content="Faça sua compra pelo celular e retire na loja ou receba em casa. Santa Teresa - ES.">
+<meta property="og:image" content="https://tiagodelboni10.github.io/merkal/logo.png">
+<meta property="og:type" content="website">
+<style>
+  :root{--red:#c4172f;--ink:#1c1c1e;--mut:#6b6b70;--bg:#f5f4f1}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .box{background:#fff;border-radius:18px;padding:32px 28px;max-width:420px;width:100%;text-align:center;
+       box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 30px rgba(0,0,0,.08)}
+  img{height:46px;margin-bottom:18px}
+  h1{font-size:19px;margin:0 0 6px}
+  p{color:var(--mut);font-size:14px;margin:0 0 20px}
+  .spin{display:inline-block;width:26px;height:26px;border:3px solid #eee;border-top-color:var(--red);
+        border-radius:50%;animation:g .8s linear infinite}
+  @keyframes g{to{transform:rotate(360deg)}}
+  a.btn{display:block;background:var(--red);color:#fff;text-decoration:none;font-weight:700;padding:14px;
+        border-radius:12px;margin-top:16px}
+  a.wa{display:inline-block;margin-top:14px;color:var(--mut);font-size:13px}
+  .erro{background:#fdecec;color:#9a1b1b;border-radius:10px;padding:12px;font-size:14px;text-align:left}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="box">
+  <img src="logo.png" alt="Merkal Supermercado">
+  <h1>Compras online</h1>
+  <p>Retire na loja no horário que quiser ou receba em casa.</p>
+  <div id="carregando"><div class="spin"></div><p style="margin-top:12px">Abrindo a loja…</p></div>
+  <div id="pronto" class="hide"><a class="btn" id="link" href="#">Entrar na loja</a></div>
+  <div id="erro" class="hide">
+    <div class="erro">A loja está fora do ar por alguns instantes. Tente de novo em um minuto ou fale com a gente no WhatsApp.</div>
+    <a class="btn" href="javascript:location.reload()">Tentar de novo</a>
+  </div>
+  <a class="wa" href="https://wa.me/5527999044729">💬 Falar com a loja no WhatsApp</a>
+</div>
+<script>
+/* O servidor da loja roda no supermercado e publica o endereço atual neste gist
+   a cada vez que sobe. Esta página lê o gist e leva o cliente direto pra lá,
+   por isso o link que ele guarda nunca muda. */
+var GIST = 'https://gist.githubusercontent.com/tiagodelboni10/5cc507c4f25e53fba649983d8cb3b3ef/raw/loja_url.json';
+function mostra(id){ ['carregando','pronto','erro'].forEach(function(x){ document.getElementById(x).classList.toggle('hide', x !== id); }); }
+fetch(GIST + '?t=' + Date.now(), {cache: 'no-store'})
+  .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+  .then(function(d){
+    var u = (d.url || '').replace(/\/$/, '');
+    if (!/^https:\/\//.test(u)) throw 0;
+    var destino = u + location.search + location.hash;
+    document.getElementById('link').href = destino;
+    mostra('pronto');
+    location.replace(destino);
+  })
+  .catch(function(){ mostra('erro'); });
+</script>
+</body>
+</html>
